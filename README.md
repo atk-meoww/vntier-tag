@@ -6,7 +6,7 @@
 > **Disclaimer:** This mod is a modified version/fork of the original [Tiers mod by Flavio6561](https://github.com/Flavio6561/Tiers). All credits for the original codebase go to Flavio6561 and the PvPTiers team.
 
 
-Official tier display mod for [PvPTiers](https://pvptiers.com)
+Official tier display mod for [VSLIST](https://vslist.sokimc.vn/home)
 
 ### Mod showcase:
 
