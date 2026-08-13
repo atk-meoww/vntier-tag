@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tiers.TiersClient;
 import com.tiers.misc.Mode;
-import com.tiers.profile.types.PvPTiersProfile;
+import com.tiers.profile.types.VSListProfile;
 import com.tiers.profile.types.SuperProfile;
 import com.tiers.textures.ColorControl;
 import com.tiers.textures.Icons;
@@ -54,7 +54,7 @@ public class PlayerProfile {
     public String uuid = "";
 
 //    public MCTiersProfile profileMCTiers;
-    public PvPTiersProfile profilePvPTiers;
+    public VSListProfile profilePvPTiers;
 //    public SubtiersProfile profileSubtiers;
 
     public Component toAppendLeft = Component.empty();
@@ -88,7 +88,7 @@ public class PlayerProfile {
         status = !name.matches("^[a-zA-Z0-9_]{3,16}$") ? Status.NOT_PLAYER : Status.SEARCHING;
     }
 
-    public PlayerProfile(String mojangJson, String jsonMCTiers, String jsonPvPTiers, String jsonSubtiers) {
+    public PlayerProfile(String mojangJson, String jsonMCTiers, String jsonVSList, String jsonSubtiers) {
         regular = false;
 
         if (JsonParser.parseString(mojangJson).isJsonNull()) {
@@ -117,7 +117,7 @@ public class PlayerProfile {
         }
 
 //        profileMCTiers = new MCTiersProfile(jsonMCTiers);
-        profilePvPTiers = new PvPTiersProfile(jsonPvPTiers);
+        profilePvPTiers = new VSListProfile(jsonVSList);
 //        profileSubtiers = new SubtiersProfile(jsonSubtiers);
 
         status = Status.READY;
@@ -153,7 +153,11 @@ public class PlayerProfile {
             int statusCode = response.statusCode();
 
             if (statusCode == 400 || statusCode == 500) {
-                status = Status.NOT_EXISTING;
+                uuid = "";
+                targetName = inGameName;
+                updateTierlistProfiles(0);
+                status = Status.READY;
+                readyPlayerProfiles.put(targetName, this);
                 return;
             } else if (statusCode != 200) {
                 buildRequest(UUID_API_2);
@@ -190,7 +194,11 @@ public class PlayerProfile {
             int statusCode = response.statusCode();
 
             if (statusCode == 404 || statusCode == 400) {
-                status = Status.NOT_EXISTING;
+                uuid = "";
+                targetName = inGameName;
+                updateTierlistProfiles(0);
+                status = Status.READY;
+                readyPlayerProfiles.put(targetName, this);
                 return;
             } else if (statusCode == 403) {
                 CompletableFuture.delayedExecutor(50, TimeUnit.MILLISECONDS).execute(() -> buildRequest(UUID_API_3));
@@ -275,7 +283,11 @@ public class PlayerProfile {
         }
 
         if (uuid.isEmpty()) {
-            status = Status.NOT_EXISTING;
+                uuid = "";
+                targetName = inGameName;
+                updateTierlistProfiles(0);
+                status = Status.READY;
+                readyPlayerProfiles.put(targetName, this);
             return;
         }
 
@@ -318,7 +330,7 @@ public class PlayerProfile {
 //            if (mode == 0 || mode == 1)
 //                profileMCTiers = new MCTiersProfile("https://mctiers.com/api/v2/profile/", uuid, extra);
             if (mode == 0 || mode == 2)
-                profilePvPTiers = new PvPTiersProfile("https://pvptiers.com/api/profile/", uuid, extra);
+                profilePvPTiers = new VSListProfile("https://vslist.sokimc.vn/api/player/", name, extra);
 //            if (mode == 0 || mode == 3)
 //                profileSubtiers = new SubtiersProfile("https://subtiers.net/api/profile/", uuid, extra);
 
@@ -337,10 +349,10 @@ public class PlayerProfile {
 //        else if (positionMCTiers == DisplayStatus.LEFT)
 //            toAppendLeft = updateProfileNameLeft(profileMCTiers, activeMCTiersMode);
 
-        if (positionPvPTiers == DisplayStatus.RIGHT)
-            toAppendRight = updateProfileNameRight(profilePvPTiers, activePvPTiersMode);
-        else if (positionPvPTiers == DisplayStatus.LEFT)
-            toAppendLeft = updateProfileNameLeft(profilePvPTiers, activePvPTiersMode);
+        if (TiersClient.positionVSList == DisplayStatus.RIGHT)
+            toAppendRight = updateProfileNameRight(profilePvPTiers, TiersClient.activeVSListMode);
+        else if (TiersClient.positionVSList == DisplayStatus.LEFT)
+            toAppendLeft = updateProfileNameLeft(profilePvPTiers, TiersClient.activeVSListMode);
 
 //        if (positionSubtiers == DisplayStatus.RIGHT)
 //            toAppendRight = updateProfileNameRight(profileSubtiers, activeSubtiersMode);

@@ -1,7 +1,6 @@
 package com.tiers.textures;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 
@@ -9,24 +8,26 @@ public class Icons {
     public static Identifier identifierMCTiers = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/pvptiers");
     public static Identifier identifierPvPTiers = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/pvptiers");
     public static final Identifier identifierSubtiers = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/subtiers");
+    public static Identifier identifierVSList = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/vslist");
 
     public static Identifier identifierMCTiersTags = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/pvptiers-tags");
     public static Identifier identifierPvPTiersTags = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/pvptiers-tags");
     public static final Identifier identifierSubtiersTags = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/subtiers-tags");
+    public static Identifier identifierVSListTags = Identifier.fromNamespaceAndPath("minecraft", "gamemodes/vslist-tags");
 
-    private static final FontDescription fontDescription = new FontDescription.Resource((Identifier.fromNamespaceAndPath("minecraft", "misc")));
+    private static final Identifier fontDescription = Identifier.fromNamespaceAndPath("minecraft", "misc");
 
-    public static Component GLOBE = Component.literal("\uF000").setStyle(Style.EMPTY.withColor(ColorControl.getColorMinecraftStandard("region")).withFont(fontDescription));
-    public static Component OVERALL = Component.literal("\uF001").setStyle(Style.EMPTY.withColor(ColorControl.getColorMinecraftStandard("overall")).withFont(fontDescription));
-    public static final Component CYCLE = Component.literal("\uF002").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component ICONS = Component.literal("\uF004").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component ICONS_DISABLED = Component.literal("\uF005").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component TAB = Component.literal("\uF006").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component TAB_DISABLED = Component.literal("\uF007").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component CHAT = Component.literal("\uF008").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component CHAT_DISABLED = Component.literal("\uF009").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component NAMEMC = Component.literal("\uF00A").setStyle(Style.EMPTY.withFont(fontDescription));
-    public static final Component DISCORD = Component.literal("\uF00B").setStyle(Style.EMPTY.withFont(fontDescription));
+    public static Component GLOBE = Component.literal("\uF000").setStyle(Style.EMPTY.withColor(ColorControl.getColorMinecraftStandard("region")).withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static Component OVERALL = Component.literal("\uF001").setStyle(Style.EMPTY.withColor(ColorControl.getColorMinecraftStandard("overall")).withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component CYCLE = Component.literal("\uF002").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component ICONS = Component.literal("\uF004").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component ICONS_DISABLED = Component.literal("\uF005").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component TAB = Component.literal("\uF006").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component TAB_DISABLED = Component.literal("\uF007").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component CHAT = Component.literal("\uF008").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component CHAT_DISABLED = Component.literal("\uF009").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component NAMEMC = Component.literal("\uF00A").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
+    public static final Component DISCORD = Component.literal("\uF00B").setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(fontDescription)));
 
     public enum Type {
         CLASSIC,

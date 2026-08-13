@@ -10,11 +10,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
+import java.util.Map;
 
 public class GameMode {
     public Status status = Status.SEARCHING;
 
     private String tier;
+    private boolean isHighTierVSList;
     private String peakTier;
     private String attained;
 
@@ -112,8 +114,48 @@ public class GameMode {
         return Component.literal(peakTierTooltipString).setStyle(Style.EMPTY.withColor(getTierColor(displayedPeakTierUnformatted)));
     }
 
+    public void parseSimpleTier(String tierString) {
+        if (tierString == null || tierString.isEmpty()) {
+            status = Status.NOT_EXISTING;
+            return;
+        }
+
+        boolean retired = tierString.toUpperCase(Locale.ROOT).startsWith("R");
+        String clean = retired ? tierString.substring(1) : tierString;
+        boolean isHigh = clean.toUpperCase(Locale.ROOT).startsWith("HT");
+        tier = clean.replaceAll("[^0-9]", "");
+        this.isHighTierVSList = isHigh;
+
+        String displayedTierUnformattedLocal = (retired ? "R" : "") + (isHigh ? "HT" : "LT") + tier;
+        displayedTier = Component.literal(displayedTierUnformattedLocal)
+                .setStyle(Style.EMPTY.withColor(getTierColor(displayedTierUnformattedLocal)));
+        tierTooltip = getSimpleTierTooltip(retired, isHigh, displayedTierUnformattedLocal);
+
+        status = Status.READY;
+    }
+
+    private Component getSimpleTierTooltip(boolean retired, boolean isHigh, String formatted) {
+        String s = retired ? "Retired " : "";
+        s += (isHigh ? "High " : "Low ") + "Tier " + tier + "\n\nPoints: " + getTierPoints(false);
+        return Component.literal(s).setStyle(Style.EMPTY.withColor(getTierColor(formatted)));
+    }
+
+    private static final Map<String, Integer> VSLIST_POINTS = Map.of(
+        "HT1", 10, "LT1", 9,
+        "HT2", 8,  "LT2", 7,
+        "HT3", 6,  "LT3", 5,
+        "HT4", 4,  "LT4", 3,
+        "HT5", 2,  "LT5", 1
+    );
+
     public int getTierPoints(boolean peak) {
         if (status == Status.NOT_EXISTING) return 0;
+
+        if (gamemode.toString().contains("VSLIST")) {
+            String key = (isHighTierVSList ? "HT" : "LT") + tier;
+            return VSLIST_POINTS.getOrDefault(key, 0);
+        }
+
         String tier = displayedTierUnformatted;
         if (peak)
             tier = displayedPeakTierUnformatted;

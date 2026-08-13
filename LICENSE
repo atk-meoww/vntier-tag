@@ -634,6 +634,8 @@ the "copyright" line and a pointer to where the full notice is found.
     Tiers, a Minecraft Fabric mod that displays tiers from MCTiers, PvPTiers and Subtiers
     Copyright (C) 2025  Flavio6561
 
+    Modified by DieuAnhCuti. Based on the original Tiers mod by Flavio6561 (https://github.com/Flavio6561/Tiers).
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or

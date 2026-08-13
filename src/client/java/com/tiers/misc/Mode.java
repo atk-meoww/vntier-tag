@@ -2,10 +2,8 @@ package com.tiers.misc;
 
 import com.tiers.textures.Icons;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.CommonColors;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -40,7 +38,16 @@ public enum Mode {
     SUBTIERS_BOW(Category.SUBTIERS, "\uF008", "Bow"),
     SUBTIERS_BED(Category.SUBTIERS, "\uF009", "Bed"),
     SUBTIERS_OG_VANILLA(Category.SUBTIERS, "\uF00A", "OG Vanilla"),
-    SUBTIERS_TRIDENT(Category.SUBTIERS, "\uF00B", "Trident");
+    SUBTIERS_TRIDENT(Category.SUBTIERS, "\uF00B", "Trident"),
+
+    VSLIST_VANILLA(Category.VSLIST, "\uF000", "Vanilla"),
+    VSLIST_UHC(Category.VSLIST, "\uF001", "UHC"),
+    VSLIST_POT(Category.VSLIST, "\uF002", "Pot"),
+    VSLIST_NETHOP(Category.VSLIST, "\uF003", "NethOP"),
+    VSLIST_SMP(Category.VSLIST, "\uF004", "Smp"),
+    VSLIST_SWORD(Category.VSLIST, "\uF005", "Sword"),
+    VSLIST_AXE(Category.VSLIST, "\uF006", "Axe"),
+    VSLIST_MACE(Category.VSLIST, "\uF007", "Mace");
 
     private final Category category;
     private final String unicode;
@@ -55,7 +62,8 @@ public enum Mode {
     public enum Category {
         MCTIERS,
         PVPTIERS,
-        SUBTIERS
+        SUBTIERS,
+        VSLIST
     }
 
     public Component getIcon() {
@@ -63,8 +71,9 @@ public enum Mode {
             case MCTIERS -> Icons.identifierMCTiers;
             case PVPTIERS -> Icons.identifierPvPTiers;
             case SUBTIERS -> Icons.identifierSubtiers;
+            case VSLIST -> Icons.identifierVSList;
         };
-        return Component.literal(unicode).setStyle(Style.EMPTY.withFont(new FontDescription.Resource(identifier)).withColor(CommonColors.WHITE));
+        return Component.literal(unicode).setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(identifier)).withColor(0xFFFFFF));
     }
 
     public Component getIconTag() {
@@ -72,8 +81,9 @@ public enum Mode {
             case MCTIERS -> Icons.identifierMCTiersTags;
             case PVPTIERS -> Icons.identifierPvPTiersTags;
             case SUBTIERS -> Icons.identifierSubtiersTags;
+            case VSLIST -> Icons.identifierVSListTags;
         };
-        return Component.literal(unicode).setStyle(Style.EMPTY.withFont(new FontDescription.Resource(identifier)).withColor(CommonColors.WHITE));
+        return Component.literal(unicode).setStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(identifier)).withColor(0xFFFFFF));
     }
 
     public Component getTextLabel() {
@@ -90,5 +100,9 @@ public enum Mode {
 
     public static Mode[] getSubtiersValues() {
         return Arrays.stream(values()).filter(mode -> mode.toString().contains("SUBTIERS")).toArray(Mode[]::new);
+    }
+
+    public static Mode[] getVSListValues() {
+        return Arrays.stream(values()).filter(mode -> mode.toString().contains("VSLIST")).toArray(Mode[]::new);
     }
 }

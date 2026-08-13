@@ -11,20 +11,19 @@ import com.tiers.textures.ColorControl;
 import com.tiers.textures.Icons;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.CommonColors;
 import net.minecraft.util.Util;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,7 +32,7 @@ import static com.tiers.TiersClient.LOGGER;
 
 public class PlayerSearchResultScreen extends Screen {
     private final PlayerProfile playerProfile;
-    private final Identifier playerAvatarTexture = Identifier.parse("");
+    private final Identifier playerAvatarTexture = Identifier.parse("tiers:avatar");
 
     Button dimensionsWarning;
 
@@ -49,14 +48,14 @@ public class PlayerSearchResultScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float a) {
         if (!playerProfile.isPlayerValid()) {
             onClose();
             return;
         }
 
         if (playerProfile.nameChanged && !toastShown) {
-            SystemToast.add(Minecraft.getInstance().gui.toastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Recent name change"), Component.literal("(" + playerProfile.name + " to " + playerProfile.inGameName + ") Data should be accurate"));
+            SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Recent name change"), Component.literal("(" + playerProfile.name + " to " + playerProfile.inGameName + ") Data should be accurate"));
             toastShown = true;
         }
 
@@ -69,7 +68,7 @@ public class PlayerSearchResultScreen extends Screen {
 //        int thirdListX = (int) (centerX + width / 3.5) + 25;
         int avatarY = height / 55 + 12;
 
-        super.extractRenderState(graphics, mouseX, mouseY, a);
+        super.render(graphics, mouseX, mouseY, a);
 
         dimensionsWarning.visible = small;
         if (tooSmall) {
@@ -78,7 +77,7 @@ public class PlayerSearchResultScreen extends Screen {
         }
 
         if (playerProfile.status == Status.SEARCHING) {
-            graphics.centeredText(font, Component.literal("Searching for " + playerProfile.name + "..."), centerX, listY, ColorControl.getColorMinecraftStandard("green"));
+            graphics.drawCenteredString(font, Component.literal("Searching for " + playerProfile.name + "..."), centerX, listY, ColorControl.getColorMinecraftStandard("green"));
             return;
         }
 
@@ -87,52 +86,52 @@ public class PlayerSearchResultScreen extends Screen {
 
         drawPlayerAvatar(graphics, centerX, avatarY);
         if (!imageReady)
-            graphics.centeredText(font, Component.literal("Loading " + playerProfile.name + "'s skin"), centerX, avatarY + 50, ColorControl.getColorMinecraftStandard("green"));
+            graphics.drawCenteredString(font, Component.literal("Loading " + playerProfile.name + "'s skin"), centerX, avatarY + 50, ColorControl.getColorMinecraftStandard("green"));
 
-        graphics.centeredText(font, playerProfile.getFullName(), centerX, height / 55, CommonColors.WHITE);
+        graphics.drawCenteredString(font, playerProfile.getFullName(), centerX, height / 55, 0xFFFFFF);
 
 //        drawCategoryList(graphics, MCTiersProfile.MCTIERS_IMAGE, playerProfile.profileMCTiers, firstListX, listY);
         drawCategoryList(graphics, PvPTiersProfile.PVPTIERS_IMAGE, playerProfile.profilePvPTiers, centerX, listY);
 //        drawCategoryList(graphics, SubtiersProfile.SUBTIERS_IMAGE, playerProfile.profileSubtiers, thirdListX, listY);
     }
 
-    private void drawCategoryList(GuiGraphicsExtractor graphics, Identifier image, SuperProfile superProfile, int x, int y) {
+    private void drawCategoryList(GuiGraphics graphics, Identifier image, SuperProfile superProfile, int x, int y) {
         if (superProfile == null) {
-            graphics.centeredText(font, "Loading from API...", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("green"));
+            graphics.drawCenteredString(font, "Loading from API...", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("green"));
             return;
         }
 
-        graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 24, 24, 24, 24);
+        graphics.blit(image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 24, 24, 0, 0, 24, 24);
 
 //        if (image == MCTiersProfile.MCTIERS_IMAGE)
-//            graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 64, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 128, 24, 128, 24);
+//            graphics.blit(image, x - 64, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 128, 24, 128, 24);
 //        else if (image == PvPTiersProfile.PVPTIERS_IMAGE)
-//            graphics.blit(RenderPipelines.GUI_TEXTURED, image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 24, 24, 24, 24);
+//            graphics.blit(image, x - 12, (int) (y + 2.4 * separator) + 4 - 38, 0, 0, 24, 24, 24, 24);
 //        else
-//            graphics.blit(RenderPipelines.GUI_TEXTURED, image, (int) (x - 15.5), (int) (y + 2.4 * separator) - 38, 0, 0, 31, 31, 31, 31);
+//            graphics.blit(image, (int) (x - 15.5), (int) (y + 2.4 * separator) - 38, 0, 0, 31, 31, 31, 31);
 
         if (superProfile.status == Status.SEARCHING) {
-            graphics.centeredText(font, "Searching...", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("green"));
+            graphics.drawCenteredString(font, "Searching...", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("green"));
             return;
         } else if (superProfile.status == Status.NOT_EXISTING) {
-            graphics.centeredText(font, "Unranked", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("red"));
+            graphics.drawCenteredString(font, "Unranked", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("red"));
             return;
         } else if (superProfile.status == Status.TIMEOUTED) {
-            graphics.centeredText(font, "Search timeouted", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("red"));
+            graphics.drawCenteredString(font, "Search timeouted", x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("red"));
             renderFailedRequestMessage(graphics, superProfile, x, y);
             return;
         } else if (superProfile.status == Status.API_ISSUE) {
-            graphics.centeredText(font, Component.literal("Search failed: API issue"), x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("red"));
+            graphics.drawCenteredString(font, Component.literal("Search failed: API issue"), x, (int) (y + 2.8 * separator), ColorControl.getColorMinecraftStandard("red"));
             renderFailedRequestMessage(graphics, superProfile, x, y);
 
-            graphics.centeredText(font, "Update Tiers or retry in a while", x, (int) (y + 2.8 * separator + 50), CommonColors.YELLOW);
+            graphics.drawCenteredString(font, "Update Tiers or retry in a while", x, (int) (y + 2.8 * separator + 50), 0xFFFF55);
             if (!superProfile.apiErrorShown) {
-                addRenderableWidget(Button.builder(Component.literal("Report issue"), (_) -> {
+                addRenderableWidget(Button.builder(Component.literal("Report issue"), (ignored) -> {
                     Minecraft client = Minecraft.getInstance();
-                    client.setScreenAndShow(new ConfirmLinkScreen((confirmed) -> {
+                    client.setScreen(new ConfirmLinkScreen((confirmed) -> {
                         if (confirmed)
                             Util.getPlatform().openUri("https://github.com/PvPTiers/Tiers/issues");
-                        client.setScreenAndShow(this);
+                        client.setScreen(this);
                     }, "https://github.com/PvPTiers/Tiers/issues", true));
                 }).bounds(x - 40, (int) (y + 2.8 * separator + 50 + 12), 80, 20).tooltip(Tooltip.create(Component.literal("Report this issue on GitHub. Make sure to report only if the same search on either mctiers.com, pvptiers.com or subtiers.com doesn't fail"))).build());
                 superProfile.apiErrorShown = true;
@@ -172,7 +171,7 @@ public class PlayerSearchResultScreen extends Screen {
             drawTierList(superProfile, x - 64, (int) (y + 2.4 * separator) + 40);
 
 //            if (superProfile instanceof MCTiersProfile && playerProfile.profileMCTiers.discordId != null) {
-//                addRenderableWidget(Button.builder(Icons.DISCORD, (_) -> {
+//                addRenderableWidget(Button.builder(Icons.DISCORD, (ignored) -> {
 //                    Minecraft client = Minecraft.getInstance();
 //                    client.setScreen(new ConfirmLinkScreen((confirmed) -> {
 //                        if (confirmed)
@@ -186,11 +185,11 @@ public class PlayerSearchResultScreen extends Screen {
         }
     }
 
-    private void renderFailedRequestMessage(GuiGraphicsExtractor graphics, SuperProfile superProfile, int x, int y) {
+    private void renderFailedRequestMessage(GuiGraphics graphics, SuperProfile superProfile, int x, int y) {
         String[] messages = superProfile.checkOutages();
-        graphics.centeredText(font, messages[0], x, (int) (y + 2.8 * separator) + 15, CommonColors.YELLOW);
-        graphics.centeredText(font, messages[1], x, (int) (y + 2.8 * separator) + 25, CommonColors.YELLOW);
-        graphics.centeredText(font, messages[2], x, (int) (y + 2.8 * separator) + 35, CommonColors.YELLOW);
+        graphics.drawCenteredString(font, messages[0], x, (int) (y + 2.8 * separator) + 15, 0xFFFF55);
+        graphics.drawCenteredString(font, messages[1], x, (int) (y + 2.8 * separator) + 25, 0xFFFF55);
+        graphics.drawCenteredString(font, messages[2], x, (int) (y + 2.8 * separator) + 35, 0xFFFF55);
     }
 
     private void drawTierList(SuperProfile superProfile, int x, int y) {
@@ -252,16 +251,16 @@ public class PlayerSearchResultScreen extends Screen {
         return true;
     }
 
-    private void drawPlayerAvatar(GuiGraphicsExtractor graphics, int x, int y) {
+    private void drawPlayerAvatar(GuiGraphics graphics, int x, int y) {
         if (imageReady) {
             if (playerProfile.imageSaved == 1 || playerProfile.imageSaved == 2)
-                graphics.blit(RenderPipelines.GUI_TEXTURED, playerAvatarTexture, x - width / 32, y, 0, 0, width / 16, (int) (width / 6.666), width / 16, (int) (width / 6.666));
+                graphics.blit(playerAvatarTexture, x - width / 32, y, width / 16, (int) (width / 6.666), 0, 0, width / 16, (int) (width / 6.666));
             else if (playerProfile.imageSaved < 6 && playerProfile.imageSaved > 2)
-                graphics.blit(RenderPipelines.GUI_TEXTURED, playerAvatarTexture, (int) (x - width / 22.5), y, 0, 0, (int) (width / 11.25), (int) (width / 6.666), (int) (width / 11.25), (int) (width / 6.666));
+                graphics.blit(playerAvatarTexture, (int) (x - width / 22.5), y, (int) (width / 11.25), (int) (width / 6.666), 0, 0, (int) (width / 11.25), (int) (width / 6.666));
         } else if (playerProfile.imageSaved != 0) {
             loadPlayerAvatar();
         } else if (playerProfile.numberOfImageRequests >= 6)
-            graphics.centeredText(font, Component.literal(playerProfile.name + "'s skin failed to load. Clear cache and retry"), x, y + 50, ColorControl.getColorMinecraftStandard("red"));
+            graphics.drawCenteredString(font, Component.literal(playerProfile.name + "'s skin failed to load. Clear cache and retry"), x, y + 50, ColorControl.getColorMinecraftStandard("red"));
     }
 
     private void loadPlayerAvatar() {
@@ -269,7 +268,7 @@ public class PlayerSearchResultScreen extends Screen {
             return;
 
         try (FileInputStream fileInputStream = new FileInputStream(FabricLoader.getInstance().getGameDir().resolve("cache/tiers/players/" + playerProfile.uuid + ".png").toFile())) {
-            Minecraft.getInstance().getTextureManager().register(playerAvatarTexture, new DynamicTexture(String::new, NativeImage.read(fileInputStream)));
+            Minecraft.getInstance().getTextureManager().register(playerAvatarTexture, new DynamicTexture(() -> "tiers_avatar", NativeImage.read(fileInputStream)));
             imageReady = true;
         } catch (IOException ignored) {
             LOGGER.warn("Error loading player skin");
@@ -280,7 +279,7 @@ public class PlayerSearchResultScreen extends Screen {
     public void init() {
         playerProfile.resetDrawnStatus();
 
-        dimensionsWarning = Button.builder(Component.literal("ℹ"), (_) -> {
+        dimensionsWarning = Button.builder(Component.literal("ℹ"), (ignored) -> {
         }).bounds(width - 20 - 5, 5, 20, 20).tooltip(Tooltip.create(Component.literal("Your window dimensions (" + width + "x" + height + ") are small\nLower the GUI scale or make the window bigger to have a better experience (ideal: 575x420)"))).build();
         dimensionsWarning.active = false;
         dimensionsWarning.visible = small;
@@ -291,20 +290,20 @@ public class PlayerSearchResultScreen extends Screen {
 
         addRenderableWidget(dimensionsWarning);
 
-        addRenderableWidget(Button.builder(Icons.NAMEMC, (_) -> {
+        addRenderableWidget(Button.builder(Icons.NAMEMC, (ignored) -> {
             Minecraft client = Minecraft.getInstance();
-            client.setScreenAndShow(new ConfirmLinkScreen((confirmed) -> {
+            client.setScreen(new ConfirmLinkScreen((confirmed) -> {
                 if (confirmed)
                     Util.getPlatform().openUri("https://namemc.com/profile/" + playerProfile.uuid);
-                client.setScreenAndShow(this);
+                client.setScreen(this);
             }, "https://namemc.com/profile/" + playerProfile.uuid, true));
         }).bounds(width - 20 - 5, height - 20 - 5, 20, 20).tooltip(Tooltip.create(Component.literal("Open " + playerProfile.targetName + "'s NameMC page"))).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Update"), (_) -> TiersClient.showUpdatedPlayerProfile(playerProfile, true)).bounds(5, height - 20 - 5, 68, 20).tooltip(Tooltip.create(Component.literal("Reload the player profile"))).build());
-        //addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(1)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update MCTiers results"))).build());
-        //addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(2)).bounds(5 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
-        //addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(3)).bounds(5 + 24 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update Subtiers results"))).build());
-        addRenderableWidget(Button.builder(Icons.CYCLE, (_) -> playerProfile.updateTierlistProfiles(2)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
+        addRenderableWidget(Button.builder(Component.literal("Update"), (ignored) -> TiersClient.showUpdatedPlayerProfile(playerProfile, true)).bounds(5, height - 20 - 5, 68, 20).tooltip(Tooltip.create(Component.literal("Reload the player profile"))).build());
+        //addRenderableWidget(Button.builder(Icons.CYCLE, (ignored) -> playerProfile.updateTierlistProfiles(1)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update MCTiers results"))).build());
+        //addRenderableWidget(Button.builder(Icons.CYCLE, (ignored) -> playerProfile.updateTierlistProfiles(2)).bounds(5 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
+        //addRenderableWidget(Button.builder(Icons.CYCLE, (ignored) -> playerProfile.updateTierlistProfiles(3)).bounds(5 + 24 + 24, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update Subtiers results"))).build());
+        addRenderableWidget(Button.builder(Icons.CYCLE, (ignored) -> playerProfile.updateTierlistProfiles(2)).bounds(5, height - 20 - 5 - 22, 20, 20).tooltip(Tooltip.create(Component.literal("Update PvPTiers results"))).build());
 
     }
 }

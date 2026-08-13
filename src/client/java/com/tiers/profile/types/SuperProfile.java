@@ -29,24 +29,28 @@ public class SuperProfile {
     public static final CopyOnWriteArrayList<SuperProfile> failedSuperProfiles = new CopyOnWriteArrayList<>();
 //    public static final AtomicInteger MCTiersRequests = new AtomicInteger(0);
     public static final AtomicInteger PvPTiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger VSListRequests = new AtomicInteger(0);
 //    public static final AtomicInteger SubtiersRequests = new AtomicInteger(0);
 //    public static final AtomicInteger failedMCTiersRequests = new AtomicInteger(0);
     public static final AtomicInteger failedPvPTiersRequests = new AtomicInteger(0);
+    public static final AtomicInteger failedVSListRequests = new AtomicInteger(0);
 //    public static final AtomicInteger failedSubtiersRequests = new AtomicInteger(0);
 //    public static final AtomicInteger failedMCTiersRequestsLastMinute = new AtomicInteger(0);
     public static final AtomicInteger failedPvPTiersRequestsLastMinute = new AtomicInteger(0);
+    public static final AtomicInteger failedVSListRequestsLastMinute = new AtomicInteger(0);
 //    public static final AtomicInteger failedSubtiersRequestsLastMinute = new AtomicInteger(0);
     public static boolean isMCTiersDown = false;
     public static boolean isPvPTiersDown = false;
+    public static boolean isVSListDown = false;
     public static boolean isSubtiersDown = false;
     public static int numberOfMessages;
 
     public Status status = Status.SEARCHING;
     private int numberOfRequests;
 
-    private String region;
-    private int points;
-    private int overallPosition;
+    protected String region;
+    protected int points;
+    protected int overallPosition;
 
     public Component displayedRegion;
     public Component displayedOverall;
@@ -69,6 +73,8 @@ public class SuperProfile {
 //            MCTiersRequests.incrementAndGet();
         if (this instanceof PvPTiersProfile)
             PvPTiersRequests.incrementAndGet();
+        if (this instanceof VSListProfile)
+            VSListRequests.incrementAndGet();
 //        if (this instanceof SubtiersProfile)
 //            SubtiersRequests.incrementAndGet();
     }
@@ -81,18 +87,22 @@ public class SuperProfile {
     private static void updateDownStatus() {
 //        isMCTiersDown = failedMCTiersRequestsLastMinute.get() > 3;
         isPvPTiersDown = failedPvPTiersRequestsLastMinute.get() > 3;
+        isVSListDown = failedVSListRequestsLastMinute.get() > 3;
 //        isSubtiersDown = failedSubtiersRequestsLastMinute.get() > 3;
     }
 
     private static void updateAndRecoverFailedRequests() {
 //        failedMCTiersRequestsLastMinute.set(0);
         failedPvPTiersRequestsLastMinute.set(0);
+        failedVSListRequestsLastMinute.set(0);
 //        failedSubtiersRequestsLastMinute.set(0);
 
         for (SuperProfile superProfile : SuperProfile.failedSuperProfiles) {
 //            if (superProfile instanceof MCTiersProfile && isMCTiersDown)
 //                continue;
             if (superProfile instanceof PvPTiersProfile && isPvPTiersDown)
+                continue;
+            if (superProfile instanceof VSListProfile && isVSListDown)
                 continue;
 //            if (superProfile instanceof SubtiersProfile && isSubtiersDown)
 //                continue;
@@ -119,6 +129,10 @@ public class SuperProfile {
         if (this instanceof PvPTiersProfile) {
             PvPTiersRequests.incrementAndGet();
             failedPvPTiersRequests.decrementAndGet();
+        }
+        if (this instanceof VSListProfile) {
+            VSListRequests.incrementAndGet();
+            failedVSListRequests.decrementAndGet();
         }
 //        if (this instanceof SubtiersProfile) {
 //            SubtiersRequests.incrementAndGet();
@@ -283,8 +297,8 @@ public class SuperProfile {
 
     private Component getOverallText() {
         String positionString = "#" + overallPosition;
-        if (!(this instanceof PvPTiersProfile) && points >= 250) return Icons.colorText(positionString, "master");
-        else if (this instanceof PvPTiersProfile && points >= 200) return Icons.colorText(positionString, "master");
+        if (!(this instanceof PvPTiersProfile || this instanceof VSListProfile) && points >= 250) return Icons.colorText(positionString, "master");
+        else if ((this instanceof PvPTiersProfile || this instanceof VSListProfile) && points >= 200) return Icons.colorText(positionString, "master");
         else if (points >= 100) return Icons.colorText(positionString, "ace");
         else if (points >= 50) return Icons.colorText(positionString, "specialist");
         else if (points >= 20) return Icons.colorText(positionString, "cadet");
@@ -298,9 +312,9 @@ public class SuperProfile {
 
 //        if (this instanceof SubtiersProfile)
 //            overallTooltip = "Subtiers ";
-        if (!(this instanceof PvPTiersProfile) && points >= 400) overallTooltip += "Grandmaster";
-        else if (!(this instanceof PvPTiersProfile) && points >= 250) overallTooltip += "Master";
-        else if (this instanceof PvPTiersProfile && points >= 200) overallTooltip += "Master";
+        if (!(this instanceof PvPTiersProfile || this instanceof VSListProfile) && points >= 400) overallTooltip += "Grandmaster";
+        else if (!(this instanceof PvPTiersProfile || this instanceof VSListProfile) && points >= 250) overallTooltip += "Master";
+        else if ((this instanceof PvPTiersProfile || this instanceof VSListProfile) && points >= 200) overallTooltip += "Master";
         else if (points >= 100) overallTooltip += "Ace";
         else if (points >= 50) overallTooltip += "Specialist";
         else if (points >= 20) overallTooltip += "Cadet";
@@ -323,6 +337,11 @@ public class SuperProfile {
                 failedPvPTiersRequestsLastMinute.incrementAndGet();
                 if (failedPvPTiersRequests.incrementAndGet() % 20 == 0)
                     message = "[Tiers] PvPTiers might be down. " + failedPvPTiersRequests + " searches (out of " + PvPTiersRequests + ") failed so far. Use '/tiers -status' for more info";
+            }
+            if (this instanceof VSListProfile) {
+                failedVSListRequestsLastMinute.incrementAndGet();
+                if (failedVSListRequests.incrementAndGet() % 20 == 0)
+                    message = "[Tiers] VSList might be down. " + failedVSListRequests + " searches (out of " + VSListRequests + ") failed so far. Use '/tiers -status' for more info";
             }
 //            if (this instanceof SubtiersProfile) {
 //                failedSubtiersRequestsLastMinute.incrementAndGet();
@@ -355,6 +374,10 @@ public class SuperProfile {
             message[0] = "PvPTiers might be down";
             message[1] = failedPvPTiersRequests + " searches (out of " + PvPTiersRequests + " profiles) failed so far";
         }
+        if (this instanceof VSListProfile) {
+            message[0] = "VSList might be down";
+            message[1] = failedVSListRequests + " searches (out of " + VSListRequests + " profiles) failed so far";
+        }
 //        if (this instanceof SubtiersProfile) {
 //            message[0] = "Subtiers might be down";
 //            message[1] = failedSubtiersRequests + " searches (out of " + SubtiersRequests + " profiles) failed so far";
@@ -369,14 +392,22 @@ public class SuperProfile {
 //            MCTiersRequests.set(0);
 //            failedMCTiersRequests.set(0);
             PvPTiersRequests.set(0);
+            VSListRequests.set(0);
             failedPvPTiersRequests.set(0);
+            failedVSListRequests.set(0);
+            VSListRequests.set(0);
 //            SubtiersRequests.set(0);
 //            failedSubtiersRequests.set(0);
         }
     }
 
-    public void setOnUpdate(Runnable onUpdate) {
-        this.onUpdate = onUpdate;
+    public void setOnUpdate(Runnable runnable) {
+        this.onUpdate = runnable;
+    }
+
+    protected void triggerUpdate() {
+        if (onUpdate != null)
+            onUpdate.run();
     }
 
     @Override
@@ -402,3 +433,4 @@ public class SuperProfile {
                 "\n\n}";
     }
 }
+

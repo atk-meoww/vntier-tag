@@ -41,8 +41,8 @@ public class ConfigManager {
 //        TiersClient.DisplayStatus positionMCTiers;
 //        Mode activeMCTiersMode;
 
-        TiersClient.DisplayStatus positionPvPTiers;
-        Mode activePvPTiersMode;
+        TiersClient.DisplayStatus positionVSList;
+        Mode activeVSListMode;
 
 //        TiersClient.DisplayStatus positionSubtiers;
 //        Mode activeSubtiersMode;
@@ -82,10 +82,10 @@ public class ConfigManager {
 //        if (Arrays.stream(Mode.values()).toList().contains(config.activeMCTiersMode) && config.activeMCTiersMode.toString().contains("MCTIERS"))
 //            TiersClient.activeMCTiersMode = config.activeMCTiersMode;
 
-        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionPvPTiers))
-            TiersClient.positionPvPTiers = config.positionPvPTiers;
-        if (Arrays.stream(Mode.values()).toList().contains(config.activePvPTiersMode) && config.activePvPTiersMode.toString().contains("PVPTIERS"))
-            TiersClient.activePvPTiersMode = config.activePvPTiersMode;
+        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionVSList))
+            TiersClient.positionVSList = config.positionVSList;
+        if (Arrays.stream(Mode.values()).toList().contains(config.activeVSListMode) && config.activeVSListMode.toString().contains("VSLIST"))
+            TiersClient.activeVSListMode = config.activeVSListMode;
 
 //        if (Arrays.stream(TiersClient.DisplayStatus.values()).toList().contains(config.positionSubtiers))
 //            TiersClient.positionSubtiers = config.positionSubtiers;
@@ -97,11 +97,11 @@ public class ConfigManager {
                 if (upgradeAdjustmentDone)
                     return;
 
-                if (minecraft.gui.screen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
+                if (minecraft.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
                     launchTickCounter++;
 
                     if (launchTickCounter >= 20) {
-                        SystemToast.add(minecraft.gui.toastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Thanks for updating Tiers"), Component.literal("Some settings may have changed"));
+                        SystemToast.add(minecraft.getToastManager(), SystemToast.SystemToastId.NARRATOR_TOGGLE, Component.literal("Thanks for updating Tiers"), Component.literal("Some settings may have changed"));
                         TiersClient.toggleMod = true;
                         TiersClient.toggleIcons = true;
                         TiersClient.toggleTab = true;
@@ -159,8 +159,8 @@ public class ConfigManager {
 //        config.positionMCTiers = TiersClient.positionMCTiers;
 //        config.activeMCTiersMode = TiersClient.activeMCTiersMode;
 
-        config.positionPvPTiers = TiersClient.positionPvPTiers;
-        config.activePvPTiersMode = TiersClient.activePvPTiersMode;
+        config.positionVSList = TiersClient.positionVSList;
+        config.activeVSListMode = TiersClient.activeVSListMode;
 
 //        config.positionSubtiers = TiersClient.positionSubtiers;
 //        config.activeSubtiersMode = TiersClient.activeSubtiersMode;
@@ -180,8 +180,8 @@ public class ConfigManager {
                 "\nactiveIcons=" + config.activeIcons +
 //                "\npositionMCTiers=" + config.positionMCTiers +
 //                "\nactiveMCTiersMode=" + config.activeMCTiersMode +
-                "\npositionPvPTiers=" + config.positionPvPTiers +
-                "\nactivePvPTiersMode=" + config.activePvPTiersMode +
+                "\npositionVSList=" + config.positionVSList +
+                "\nactiveVSListMode=" + config.activeVSListMode +
 //                "\npositionSubtiers=" + config.positionSubtiers +
 //                "\nactiveSubtiersMode=" + config.activeSubtiersMode +
                 "\nversion=" + config.version +

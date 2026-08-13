@@ -6,7 +6,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.tiers.TiersClient;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 public class CommandRegister {
-    private static final SuggestionProvider<FabricClientCommandSource> PLAYERS = (_, suggestionsBuilder) -> suggestPlayers(suggestionsBuilder);
+    private static final SuggestionProvider<FabricClientCommandSource> PLAYERS = (ignored, suggestionsBuilder) -> suggestPlayers(suggestionsBuilder);
 
     private static CompletableFuture<Suggestions> suggestPlayers(SuggestionsBuilder suggestionsBuilder) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -34,12 +34,12 @@ public class CommandRegister {
     }
 
     public static void registerCommands() {
-        ClientCommandRegistrationCallback.EVENT.register((commandDispatcher, _) -> commandDispatcher.register(
-                ClientCommands.literal("tiers").executes(ignored -> {
+        ClientCommandRegistrationCallback.EVENT.register((commandDispatcher, ignored2) -> commandDispatcher.register(
+                ClientCommandManager.literal("tiers").executes(ignored -> {
                             TiersClient.toggleMod(null);
                             return 1;
                         })
-                        .then(ClientCommands.argument("Name", StringArgumentType.string()).suggests(PLAYERS).executes(context -> {
+                        .then(ClientCommandManager.argument("Name", StringArgumentType.string()).suggests(PLAYERS).executes(context -> {
                                     TiersClient.tiersCommand(StringArgumentType.getString(context, "Name"));
                                     return 1;
                                 })

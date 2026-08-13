@@ -1,4 +1,10 @@
-## Tiers,
+## Tiers
+
+
+> **Disclaimer:** This mod is a modified version/fork of the original [Tiers mod by Flavio6561](https://github.com/Flavio6561/Tiers). All credits for the original codebase go to Flavio6561 and the PvPTiers team.
+
+> **Disclaimer:** This mod is a modified version/fork of the original [Tiers mod by Flavio6561](https://github.com/Flavio6561/Tiers). All credits for the original codebase go to Flavio6561 and the PvPTiers team.
+
 
 Official tier display mod for [PvPTiers](https://pvptiers.com)
 
@@ -31,7 +37,7 @@ Official tier display mod for [PvPTiers](https://pvptiers.com)
 - **`Toggle Chat`** toggles Tiers in chat
 - **`Toggle Dynamic Separator`** decides if the separator | is the same color as the tier or gray
 - **`Displayed Tier`** decides whether to display selected mode, adaptive highest or absolute highest
-- **`Preview Switcher`** decides whether to preview the default profile (ItzRealMe) or your character
+- **`Preview Switcher`** decides whether to preview the default profile (DieuAnhCuti) or your character
 - **`Left and Right gamemode switcher`** switches between gamemodes of the selected provider
 - **`Position Settings`** decides if the specific provider gamemodes are displayer on the right, left or neither
 - **`Icon and color presets:`** you can switch between classic, PvPTiers and MCTiers styled icons

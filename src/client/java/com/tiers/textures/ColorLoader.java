@@ -8,9 +8,11 @@ import com.tiers.profile.PlayerProfile;
 import com.tiers.screens.ConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.util.GsonHelper;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
+import net.minecraft.server.packs.resources.PreparableReloadListener.SharedState;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,14 +25,19 @@ import java.util.concurrent.Executor;
 
 import static com.tiers.TiersClient.LOGGER;
 
-public class ColorLoader implements PreparableReloadListener {
+public class ColorLoader implements IdentifiableResourceReloadListener {
     public static Identifier identifier = Identifier.fromNamespaceAndPath("minecraft", "colors/pvptiers.json");
 
     @Override
-    public @NonNull CompletableFuture<Void> reload(SharedState currentReload, @NonNull Executor taskExecutor, @NonNull PreparationBarrier preparationBarrier, @NonNull Executor reloadExecutor) {
-        if (currentReload.resourceManager().getResource(identifier).isPresent()) {
+    public @NotNull Identifier getFabricId() {
+        return Identifier.parse("tiers");
+    }
+
+    @Override
+    public @NotNull CompletableFuture<Void> reload(@NotNull SharedState sharedState, @NotNull Executor backgroundExecutor, @NotNull PreparationBarrier preparationBarrier, @NotNull Executor gameExecutor) {
+        if (sharedState.resourceManager().getResource(identifier).isPresent()) {
             try {
-                ColorControl.updateColors(GsonHelper.fromJson(new Gson(), new InputStreamReader(currentReload.resourceManager().getResource(identifier).get().open(), StandardCharsets.UTF_8), JsonObject.class));
+                ColorControl.updateColors(GsonHelper.fromJson(new Gson(), new InputStreamReader(sharedState.resourceManager().getResource(identifier).get().open(), StandardCharsets.UTF_8), JsonObject.class));
                 TiersClient.restyleAllTexts(TiersClient.playerProfiles);
                 TiersClient.updateAllTags();
             } catch (IOException ignored) {
@@ -60,8 +67,8 @@ public class ColorLoader implements PreparableReloadListener {
         }
 
         return CompletableFuture.runAsync(() -> {
-        }, taskExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
-        }, reloadExecutor);
+        }, backgroundExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
+        }, gameExecutor);
     }
 
     private static String loadStringFromResources(String path) {

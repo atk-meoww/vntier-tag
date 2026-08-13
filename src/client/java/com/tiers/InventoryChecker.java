@@ -23,7 +23,7 @@ public class InventoryChecker {
         }
 
 //        Mode oldActiveMCTiersMode = TiersClient.activeMCTiersMode;
-        Mode oldActivePvPTiersMode = TiersClient.activePvPTiersMode;
+        Mode oldactiveVSListMode = TiersClient.activeVSListMode;
 //        Mode oldActiveSubtiersMode = TiersClient.activeSubtiersMode;
         Mode detected = null;
 
@@ -31,49 +31,49 @@ public class InventoryChecker {
 
         if (checkVanilla(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_VANILLA;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_CRYSTAL;
+            TiersClient.activeVSListMode = Mode.VSLIST_VANILLA;
             detected = Mode.MCTIERS_VANILLA;
         }
 
         if (checkSword(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_SWORD;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_SWORD;
+            TiersClient.activeVSListMode = Mode.VSLIST_SWORD;
             detected = Mode.MCTIERS_SWORD;
         }
 
         if (checkUhc(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_UHC;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_UHC;
+            TiersClient.activeVSListMode = Mode.VSLIST_UHC;
             detected = Mode.MCTIERS_UHC;
         }
 
         if (checkPot(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_POT;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_POT;
+            TiersClient.activeVSListMode = Mode.VSLIST_POT;
             detected = Mode.MCTIERS_POT;
         }
 
         if (checkNethPot(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_NETH_OP;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_NETH_POT;
+            TiersClient.activeVSListMode = Mode.VSLIST_NETHOP;
             detected = Mode.MCTIERS_NETH_OP;
         }
 
         if (checkSmp(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_SMP;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_SMP;
+            TiersClient.activeVSListMode = Mode.VSLIST_SMP;
             detected = Mode.MCTIERS_SMP;
         }
 
         if (checkAxe(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_AXE;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_AXE;
+            TiersClient.activeVSListMode = Mode.VSLIST_AXE;
             detected = Mode.MCTIERS_AXE;
         }
 
         if (checkMace(inventory)) {
 //            TiersClient.activeMCTiersMode = Mode.MCTIERS_MACE;
-            TiersClient.activePvPTiersMode = Mode.PVPTIERS_MACE;
+            TiersClient.activeVSListMode = Mode.VSLIST_MACE;
             detected = Mode.MCTIERS_MACE;
         }
 
@@ -137,12 +137,12 @@ public class InventoryChecker {
 //            detected = Mode.SUBTIERS_TRIDENT;
 //        }
 
-//        if ((oldActiveMCTiersMode != TiersClient.activeMCTiersMode || oldActivePvPTiersMode != TiersClient.activePvPTiersMode || oldActiveSubtiersMode != TiersClient.activeSubtiersMode) && detected != null) {
+//        if ((oldActiveMCTiersMode != TiersClient.activeMCTiersMode || oldactiveVSListMode != TiersClient.activeVSListMode || oldActiveSubtiersMode != TiersClient.activeSubtiersMode) && detected != null) {
 //            ConfigManager.saveConfig();
 //            TiersClient.sendMessageToPlayer(Component.empty().append(detected.getTextLabel()).append(Component.literal(" was detected")), true);
 //        } else if (showMessage)
 //            TiersClient.sendMessageToPlayer(Icons.colorText("No gamemode detected", "red"), true);
-        if (oldActivePvPTiersMode != TiersClient.activePvPTiersMode && detected != null) {
+        if (oldactiveVSListMode != TiersClient.activeVSListMode && detected != null) {
             ConfigManager.saveConfig();
             TiersClient.sendMessageToPlayer(Component.empty().append(detected.getTextLabel()).append(Component.literal(" was detected")), true);
         } else if (showMessage)
@@ -740,7 +740,7 @@ public class InventoryChecker {
             hasXp |= hasItem(stack, Items.EXPERIENCE_BOTTLE);
             hasPearls |= hasItem(stack, Items.ENDER_PEARL);
             hasGaps |= hasItem(stack, Items.GOLDEN_APPLE);
-            hasBed |= Items.BED.asList().stream().anyMatch(item -> hasItem(stack, item));
+            hasBed |= stack.is(net.minecraft.tags.ItemTags.BEDS);
             hasObsidian |= hasItem(stack, Items.OBSIDIAN);
             hasSword |= hasItem(stack, Items.NETHERITE_SWORD, true);
             hasPickaxe |= hasItem(stack, Items.NETHERITE_PICKAXE, true);
