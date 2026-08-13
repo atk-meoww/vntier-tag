@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Player.class)
 public abstract class AddRenderedPlayersClientMixin {
     @Inject(at = @At(value = "TAIL"), method = "<init>")
-    private void onConstruct(final Level level, final BlockPos blockPos, final float yRot, final GameProfile gameProfile, CallbackInfo ci) {
+    private void onConstruct(final Level level, final GameProfile gameProfile, CallbackInfo ci) {
         if (TiersClient.toggleMod)
             TiersClient.addGetPlayer(gameProfile.name(), false);
     }
